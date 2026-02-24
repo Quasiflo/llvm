@@ -10,72 +10,46 @@ function PLUGIN:BackendListVersions(ctx)
         error("Tool name cannot be empty")
     end
 
-    -- Example implementations (choose/modify based on your backend):
-
-    -- Example 1: API-based version listing (like npm, pip, cargo)
-    local http = require("http")
-    local json = require("json")
-
-    -- Replace with your backend's API endpoint
-    local api_url = "https://api.<BACKEND>.org/packages/" .. tool .. "/versions"
-
-    local resp, err = http.get({
-        url = api_url,
-        -- headers = { ["Authorization"] = "Bearer " .. token } -- if needed
-    })
-
-    if err then
-        error("Failed to fetch versions for " .. tool .. ": " .. err)
-    end
-
-    if resp.status_code ~= 200 then
-        error("API returned status " .. resp.status_code .. " for " .. tool)
-    end
-
-    local data = json.decode(resp.body)
-    local versions = {}
-
-    -- Parse versions from API response (adjust based on your API structure)
-    if data.versions then
-        for _, version in ipairs(data.versions) do
-            table.insert(versions, version)
-        end
-    end
-
-    -- Example 2: Command-line based version listing
-    --[[
     local cmd = require("cmd")
 
-    -- Replace with your backend's command to list versions
-    local command = "<BACKEND> search " .. tool .. " --versions"
+    local command = "git ls-remote --tags https://github.com/llvm/llvm-project.git"
     local result = cmd.exec(command)
 
-    if not result or result:match("error") then
+    if not result then
         error("Failed to fetch versions for " .. tool)
     end
 
     local versions = {}
-    -- Parse command output to extract versions
-    for version in result:gmatch("[%d%.]+[%w%-]*") do
-        table.insert(versions, version)
-    end
-    --]]
+    local seen = {} -- To track unique versions
 
-    -- Example 3: Registry file parsing
-    --[[
-    local file = require("file")
-
-    -- Replace with path to your backend's registry or manifest
-    local registry_path = "/path/to/<BACKEND>/registry/" .. tool .. ".json"
-
-    if not file.exists(registry_path) then
-        error("Tool " .. tool .. " not found in registry")
+    for line in result:gmatch("[^\n]+") do
+        local tag = line:match("\trefs/tags/(.+)")
+        if tag then
+            tag = tag:gsub("%^{}$", "") -- Strip peeled suffix
+            local version = tag:gsub("llvmorg%-", "")
+            if not seen[version] and tag:match("^llvmorg%-%d+%.%d+%.%d+$") then
+                seen[version] = true
+                table.insert(versions, version)
+            end
+        end
     end
 
-    local content = file.read(registry_path)
-    local data = json.decode(content)
-    local versions = data.versions or {}
-    --]]
+    -- Sort versions by semver in ascending order
+    table.sort(versions, function(a, b)
+        local function parse_semver(v)
+            local major, minor, patch = v:match("(%d+)%.(%d+)%.(%d+)")
+            return tonumber(major), tonumber(minor), tonumber(patch)
+        end
+        local ma, na, pa = parse_semver(a)
+        local mb, nb, pb = parse_semver(b)
+        if ma ~= mb then
+            return ma < mb
+        end
+        if na ~= nb then
+            return na < nb
+        end
+        return pa < pb
+    end)
 
     if #versions == 0 then
         error("No versions found for " .. tool)

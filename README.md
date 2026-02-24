@@ -33,9 +33,9 @@ git init
 ### 1. Replace placeholders
 
 Search and replace these placeholders throughout the project:
-- `<BACKEND>` → your backend name (e.g., `npm`, `cargo`, `pip`)
-- `<GITHUB_USER>` → your GitHub username or organization  
-- `<TEST_TOOL>` → a real tool name your backend can install (for testing)
+- `llvm` → your backend name (e.g., `npm`, `cargo`, `pip`)
+- `Quasiflo` → your GitHub username or organization  
+- `clangd` → a real tool name your backend can install (for testing)
 
 Files to update:
 - `metadata.lua` - Update name, description, author, homepage
@@ -149,22 +149,22 @@ This sets up automatic linting and formatting on git commits.
 
 1. Link your plugin for development:
 ```bash
-mise plugin link --force <BACKEND> .
+mise plugin link --force llvm .
 ```
 
 2. Test version listing:
 ```bash
-mise ls-remote <BACKEND>:<some-tool>
+mise ls-remote llvm:<some-tool>
 ```
 
 3. Test installation:
 ```bash
-mise install <BACKEND>:<some-tool>@latest
+mise install llvm:<some-tool>@latest
 ```
 
 4. Test execution:
 ```bash
-mise exec <BACKEND>:<some-tool>@latest -- <some-tool> --version
+mise exec llvm:<some-tool>@latest -- <some-tool> --version
 ```
 
 5. Run tests:
@@ -201,7 +201,7 @@ hk fix        # Run linters and auto-fix issues
 
 Enable debug output:
 ```bash
-mise --debug install <BACKEND>:<tool>@<version>
+mise --debug install llvm:<tool>@<version>
 ```
 
 ## Files
