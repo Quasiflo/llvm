@@ -154,7 +154,7 @@ function PLUGIN:BackendInstall(ctx)
     end
 
     -- Determine cores for parallel build
-    local cores_cmd = RUNTIME.osType == "Linux" and "nproc" or "sysctl -n hw.ncpu"
+    local cores_cmd = RUNTIME.osType == "linux" and "nproc" or "sysctl -n hw.ncpu"
     local cores_output = cmd.exec(cores_cmd)
     local cores = cores_output:gsub("%s+", "")
 
