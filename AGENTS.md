@@ -11,9 +11,9 @@ This is a **mise backend plugin** that manages LLVM toolchain installations (cla
 mise run test
 
 # Run a single test tool manually
-mise ls-remote llvm:clangd          # Test version listing
-mise install llvm:clangd@latest       # Test installation
-mise exec llvm:clangd@latest -- clangd --version  # Test execution
+mise ls-remote llvm:clang          # Test version listing
+mise install llvm:clang@latest       # Test installation
+mise exec llvm:clang@latest -- clang --version  # Test execution
 ```
 
 ### Linting & Formatting
@@ -152,7 +152,7 @@ local result = cmd.exec("git ls-remote --tags https://github.com/llvm/llvm-proje
 ### Development Workflow
 1. Link plugin: `mise plugin link --force llvm .`
 2. Test: `mise run test`
-3. Debug: `mise --debug install llvm:clangd@latest`
+3. Debug: `mise --debug install llvm:clang@latest`
 
 ### Resources
 - [mise Backend Plugin Docs](https://mise.jdx.dev/backend-plugin-development.html)

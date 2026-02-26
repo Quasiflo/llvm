@@ -35,7 +35,7 @@ git init
 Search and replace these placeholders throughout the project:
 - `llvm` → your backend name (e.g., `npm`, `cargo`, `pip`)
 - `Quasiflo` → your GitHub username or organization  
-- `clangd` → a real tool name your backend can install (for testing)
+- `clang` → a real tool name your backend can install (for testing)
 
 Files to update:
 - `metadata.lua` - Update name, description, author, homepage

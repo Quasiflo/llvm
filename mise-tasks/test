@@ -14,7 +14,7 @@ echo "Testing plugin linking and basic functionality..."
 # Try to list available versions for a test tool
 # Note: This will likely fail until you implement the backend methods
 # Replace clangd with a real tool name your backend supports
-TEST_TOOL="clangd"
+TEST_TOOL="clang"
 
 echo "Testing version listing for ${TEST_TOOL}..."
 if mise ls-remote llvm:${TEST_TOOL} 2>/dev/null; then
@@ -39,4 +39,4 @@ else
 fi
 
 echo "✓ Basic plugin structure tests completed"
-echo "Note: Replace clangd with a real tool and implement the backend methods"
+echo "Note: Replace clang with a real tool and implement the backend methods"
