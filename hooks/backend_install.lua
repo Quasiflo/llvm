@@ -5,6 +5,7 @@
 function PLUGIN:BackendInstall(ctx)
     local cmd = require("cmd")
     local file = require("file")
+    local logger = require("src.logger")
     local util = require("src.util")
     local config = require("src.config")
     local download = require("src.download")
@@ -24,6 +25,8 @@ function PLUGIN:BackendInstall(ctx)
         error("Version cannot be empty")
     end
 
+    logger.milestone("Installing " .. tool .. " " .. version .. " ...")
+
     local tool_config = config.validate_tool(tool)
 
     prebuild.check_all_requirements(tool, tool_config)
@@ -37,6 +40,7 @@ function PLUGIN:BackendInstall(ctx)
 
     local tarball_path = download.download_source_tarball(version, core_download_path)
     local core_source_dir = download.extract_source(tarball_path, core_download_path, version)
+    local tool_source_dir = file.join_path(core_source_dir, tool)
 
     local cores = util.get_parallel_cores()
 

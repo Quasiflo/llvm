@@ -33,6 +33,10 @@ local function find_executable(name, aliases)
 end
 
 function M.check_core_requirements()
+    local logger = require("src.logger")
+
+    logger.step("Checking build requirements...")
+
     local missing_cmake = not find_executable("cmake")
     local missing_ninja = not find_executable("ninja")
     local missing_compiler = not find_executable("c++", CORE_REQUIRED_TOOLS[3].aliases)
@@ -40,12 +44,19 @@ function M.check_core_requirements()
     if missing_cmake then
         error("Missing required build tool: cmake\nInstall via: mise install cmake@latest")
     end
+    logger.step("cmake: found")
+
     if missing_ninja then
         error("Missing required build tool: ninja\nInstall via: mise install ninja@latest")
     end
+    logger.step("ninja: found")
+
     if missing_compiler then
         error("Missing required build tool: c++ compiler\nInstall via: brew install gcc / apt install g++")
     end
+    logger.step("c++ compiler: found")
+
+    logger.success("All core build requirements satisfied")
 
     return true
 end
