@@ -1,4 +1,22 @@
 {
     "mise.configureExtensionsAutomatically": true,
     "mise.configureExtensionsUseSymLinks": true,
+    "debug.javascript.defaultRuntimeExecutable": {
+        "pwa-node": "${workspaceFolder}/.vscode/mise-tools/node"
+    },
+    "bazel.executable": ".vscode/mise-tools/bazelisk",
+    "bazel.buildifierExecutable": ".vscode/mise-tools/buildifier",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/flutter/ephemeral": true,
+        "**/Flutter/ephemeral": true,
+        "**/.symlinks": true,
+        "**/.plugin_symlinks": true,
+        ".vscode/mise-tools": true
+    },
+    "explorerExclude.backup": {},
 }
