@@ -2,11 +2,13 @@
 local M = {}
 
 local DISABLE_TESTS_FLAGS =
-    "-DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_BUILD_EXAMPLES=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_BUILD_TESTS=OFF"
+    "-DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_BUILD_EXAMPLES=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_BUILD_TESTS=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_BUILD_BENCHMARKS=OFF"
 
 function M.build_core_cmake_command(source_dir, install_path)
+    local file = require("file")
+
     return "cmake -S "
-        .. source_dir
+        .. file.join_path(source_dir, "llvm")
         .. " -B . "
         .. "-DCMAKE_BUILD_TYPE=Release "
         .. "-DCMAKE_INSTALL_PREFIX="

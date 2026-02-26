@@ -46,7 +46,7 @@ function PLUGIN:BackendInstall(ctx)
 
     build_core.build_if_missing(core_install_path, core_source_dir, cores)
 
-    build_tool.build(tool, version, install_path, download_path, core_source_dir, core_install_path, tool_config, cores)
+    build_tool.build(tool, version, install_path, download_path, tool_source_dir, core_install_path, tool_config, cores)
 
     return {}
 end
