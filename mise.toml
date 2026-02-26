@@ -25,3 +25,7 @@ run = "hk fix"
 [tasks.ci]
 description = "Run all CI checks"
 depends = ["lint", "test"]
+
+[tasks.cache-clear]
+description = "Clear mise cache for this plugin"
+run = "mise cache clear llvm"

@@ -103,11 +103,11 @@ Your backend may need to handle different operating systems:
 
 ```lua
 -- Available in all hooks via RUNTIME object
-if RUNTIME.osType == "Darwin" then
+if RUNTIME.osType == "darwin" then
     -- macOS-specific logic
-elseif RUNTIME.osType == "Linux" then  
+elseif RUNTIME.osType == "linux" then  
     -- Linux-specific logic
-elseif RUNTIME.osType == "Windows" then
+elseif RUNTIME.osType == "windows" then
     -- Windows-specific logic
 end
 ```

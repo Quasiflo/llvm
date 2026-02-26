@@ -9,17 +9,12 @@ function PLUGIN:BackendListVersions(ctx)
         error("Tool name cannot be empty")
     end
 
-    local cmd = require("cmd")
+    -- Use GitHub Releases API with mise's built-in caching.
+    -- See: https://mise.jdx.dev/cache-behavior.html for how mise caches remote versions.
+    -- By default, mise caches remote versions and updates daily.
     local versions = require("src.versions")
 
-    local command = "git ls-remote --tags https://github.com/llvm/llvm-project.git"
-    local result = cmd.exec(command)
-
-    if not result then
-        error("Failed to fetch versions for " .. tool)
-    end
-
-    local version_list = versions.parse_git_remote_tags(result)
+    local version_list = versions.fetch_versions()
 
     if #version_list == 0 then
         error("No versions found for " .. tool)

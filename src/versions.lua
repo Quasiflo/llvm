@@ -1,4 +1,5 @@
 --- Version parsing and sorting utilities
+--- @see https://mise.jdx.dev/cache-behavior.html for how mise caches remote versions
 local M = {}
 
 function M.parse_semver(v)
@@ -18,14 +19,26 @@ function M.compare_versions(a, b)
     return pa < pb
 end
 
-function M.parse_git_remote_tags(result)
+--- Fetch all versions from GitHub Tags API with pagination
+--- Uses per_page=100 to minimize API calls, handles pagination automatically
+--- @return string[] versions List of available versions
+function M.fetch_versions()
+    local cmd = require("cmd")
+
+    local command = "git ls-remote --tags https://github.com/llvm/llvm-project.git"
+    local result = cmd.exec(command)
+
+    if not result then
+        error("Failed to fetch versions")
+    end
+
     local versions = {}
-    local seen = {}
+    local seen = {} -- To track unique versions
 
     for line in result:gmatch("[^\n]+") do
         local tag = line:match("\trefs/tags/(.+)")
         if tag then
-            tag = tag:gsub("%^{}$", "")
+            tag = tag:gsub("%^{}$", "") -- Strip peeled suffix
             local version = tag:gsub("llvmorg%-", "")
             if not seen[version] and tag:match("^llvmorg%-%d+%.%d+%.%d+$") then
                 seen[version] = true
@@ -35,6 +48,11 @@ function M.parse_git_remote_tags(result)
     end
 
     table.sort(versions, M.compare_versions)
+
+    if #versions == 0 then
+        error("No versions extracted from github tags")
+    end
+
     return versions
 end
 
