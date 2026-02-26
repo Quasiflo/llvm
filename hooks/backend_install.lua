@@ -10,6 +10,7 @@ function PLUGIN:BackendInstall(ctx)
     local download = require("src.download")
     local build_core = require("src.build.core")
     local build_tool = require("src.build.tool")
+    local prebuild = require("src.prebuild")
 
     local tool = ctx.tool
     local version = ctx.version
@@ -24,6 +25,8 @@ function PLUGIN:BackendInstall(ctx)
     end
 
     local tool_config = config.validate_tool(tool)
+
+    prebuild.check_all_requirements(tool, tool_config)
 
     local core_name = "core"
     local core_install_path = install_path:gsub(util.escape_magic(tool), core_name)

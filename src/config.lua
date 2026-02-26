@@ -6,54 +6,66 @@ local TOOL_CONFIG = {
         project = "bolt",
         bin = "llvm-bolt",
         extra_flags = "",
+        required_tools = {},
     },
     ["clang"] = {
         project = "clang",
         bin = "clang",
         extra_flags = "",
+        required_tools = {
+            --! EXAMPLE { name = "clang", aliases = {"clang-18", "clang-17"}, help = "Clang >= 15 recommended" },
+        },
     },
     ["compiler-rt"] = {
         project = "compiler-rt",
         bin = "",
         extra_flags = "",
+        required_tools = {},
     },
     ["libc"] = {
         project = "libc",
         bin = "libc",
         extra_flags = '-DLLVM_ENABLE_RUNTIMES="libc"',
         runtime = true,
+        required_tools = {},
     },
     ["libcxx"] = {
         project = "libcxx",
         bin = "libcxx",
         extra_flags = '-DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind"',
         runtime = true,
+        required_tools = {},
     },
     ["libunwind"] = {
         project = "libunwind",
         bin = "libunwind",
         extra_flags = '-DLLVM_ENABLE_RUNTIMES="libunwind"',
         runtime = true,
+        required_tools = {},
     },
     ["lld"] = {
         project = "lld",
         bin = "lld",
         extra_flags = "",
+        required_tools = {},
     },
     ["mlir"] = {
         project = "mlir",
         bin = "mlir",
         extra_flags = "",
+        required_tools = {},
     },
     ["openmp"] = {
         project = "openmp",
         bin = "openmp",
         extra_flags = "",
+        required_tools = {},
     },
     ["polly"] = {
         project = "polly",
         bin = "polly",
         extra_flags = "-DCMAKE_CXX_STANDARD=17",
+        required_tools = {},
     },
 }
 

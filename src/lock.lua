@@ -6,11 +6,10 @@ local DEFAULT_CHECK_INTERVAL = 2
 
 local function sleep(seconds)
     local cmd = require("cmd")
-    local RUNTIME = require("RUNTIME")
     if RUNTIME.osType == "windows" then
-        cmd.exec("timeout /t " .. seconds .. " /nobreak >nul")
+        pcall(cmd.exec, "timeout /t " .. seconds .. " /nobreak >nul")
     else
-        cmd.exec("sleep " .. seconds)
+        pcall(cmd.exec, "sleep " .. seconds)
     end
 end
 
@@ -57,13 +56,13 @@ local function is_process_alive(pid)
     if not pid then
         return false
     end
-    local result = cmd.exec("kill -0 " .. pid .. " 2>/dev/null")
-    return result.exit_code == 0
+    local success, result = pcall(cmd.exec, "kill -0 " .. pid .. " 2>/dev/null")
+    return success and result and not result.exit_code
 end
 
 local function cleanup_stale_lock(lock_dir)
     local cmd = require("cmd")
-    cmd.exec("rm -rf '" .. escape_path(lock_dir) .. "'")
+    pcall(cmd.exec, "rm -rf '" .. escape_path(lock_dir) .. "'")
 end
 
 function M.acquire(lock_path, opts)
@@ -77,17 +76,19 @@ function M.acquire(lock_path, opts)
     local start_time = os.time()
 
     while os.time() - start_time < timeout do
-        local mkdir_result = cmd.exec("mkdir '" .. escape_path(lock_dir) .. "' 2>/dev/null")
-        if mkdir_result.exit_code == 0 then
+        local success_mkdir, mkdir_result = pcall(cmd.exec, "mkdir '" .. escape_path(lock_dir) .. "' 2>/dev/null")
+        if success_mkdir and mkdir_result and not mkdir_result.exit_code then
+            local success_pid, pid_result = pcall(cmd.exec, "echo $PPID")
+            local success_host, host_result = pcall(cmd.exec, "hostname")
             local info = {
-                pid = tonumber(cmd.exec("echo $PPID").output:match("%d+")),
+                pid = success_pid and pid_result and tonumber(pid_result.output:match("%d+")) or 0,
                 timestamp = os.time(),
-                hostname = cmd.exec("hostname").output:gsub("%s+", ""),
+                hostname = success_host and host_result and host_result.output:gsub("%s+", "") or "",
             }
             if write_lock_info(lock_dir, info) then
                 return true
             else
-                cmd.exec("rmdir '" .. escape_path(lock_dir) .. "'")
+                pcall(cmd.exec, "rmdir '" .. escape_path(lock_dir) .. "'")
             end
         end
 
@@ -97,17 +98,20 @@ function M.acquire(lock_path, opts)
 
             if not owner_alive then
                 cleanup_stale_lock(lock_dir)
-                local mkdir_result = cmd.exec("mkdir '" .. escape_path(lock_dir) .. "' 2>/dev/null")
-                if mkdir_result.exit_code == 0 then
+                local success_mkdir2, mkdir_result2 =
+                    pcall(cmd.exec, "mkdir '" .. escape_path(lock_dir) .. "' 2>/dev/null")
+                if success_mkdir2 and mkdir_result2 and mkdir_result2.exit_code == 0 then
+                    local success_pid2, pid_result2 = pcall(cmd.exec, "echo $PPID")
+                    local success_host2, host_result2 = pcall(cmd.exec, "hostname")
                     local new_info = {
-                        pid = tonumber(cmd.exec("echo $PPID").output:match("%d+")),
+                        pid = success_pid2 and pid_result2 and tonumber(pid_result2.output:match("%d+")) or 0,
                         timestamp = os.time(),
-                        hostname = cmd.exec("hostname").output:gsub("%s+", ""),
+                        hostname = success_host2 and host_result2 and host_result2.output:gsub("%s+", "") or "",
                     }
                     if write_lock_info(lock_dir, new_info) then
                         return true
                     else
-                        cmd.exec("rmdir '" .. escape_path(lock_dir) .. "'")
+                        pcall(cmd.exec, "rmdir '" .. escape_path(lock_dir) .. "'")
                     end
                 end
             end
@@ -129,13 +133,14 @@ function M.release(lock_path)
     end
 
     local info = read_lock_info(lock_dir)
-    local current_pid = tonumber(cmd.exec("echo $PPID").output:match("%d+"))
+    local success_pid, pid_result = pcall(cmd.exec, "echo $PPID")
+    local current_pid = success_pid and pid_result and tonumber(pid_result.output:match("%d+")) or 0
 
     if info and info.pid ~= current_pid then
         return false
     end
 
-    cmd.exec("rm -rf '" .. escape_path(lock_dir) .. "'")
+    pcall(cmd.exec, "rm -rf '" .. escape_path(lock_dir) .. "'")
     return true
 end
 
