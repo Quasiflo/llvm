@@ -1,0 +1,4 @@
+{
+    "mise.configureExtensionsAutomatically": true,
+    "mise.configureExtensionsUseSymLinks": true,
+}
