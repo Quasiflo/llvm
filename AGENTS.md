@@ -128,12 +128,25 @@ local result = cmd.exec("git ls-remote --tags https://github.com/llvm/llvm-proje
 ### Project Structure
 ```
 /workspaces/llvm/
-├── hooks/                    # Backend hook implementations
-├── mise-tasks/test           # Test runner script
-├── types/mise-plugin.lua     # Lua type definitions
-├── metadata.lua               # Plugin metadata
-├── mise.toml                 # Dev tools config
-└── stylua.toml              # Formatting rules
+├── src/                        # Core modules
+│   ├── init.lua                # Module loader
+│   ├── util.lua                # Utilities (escape_magic, wait, etc.)
+│   ├── versions.lua            # Version parsing/sorting
+│   ├── config.lua              # Tool configuration
+│   ├── cmake.lua               # CMake command builders
+│   ├── download.lua            # Download logic with locking
+│   └── build/
+│       ├── init.lua            # Build module loader
+│       ├── core.lua            # Core LLVM build
+│       ├── tool.lua            # Tool-specific build
+│       └── prebuilt.lua        # Prebuilt binary downloads
+├── hooks/                      # Backend hook implementations
+├── tests/                      # Test infrastructure
+├── mise-tasks/test             # Test runner script
+├── types/mise-plugin.lua       # Lua type definitions
+├── metadata.lua                # Plugin metadata
+├── mise.toml                   # Dev tools config
+└── stylua.toml                 # Formatting rules
 ```
 
 ### Development Workflow
