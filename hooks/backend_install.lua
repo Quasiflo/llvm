@@ -13,6 +13,7 @@ function PLUGIN:BackendInstall(ctx)
     local build_core = require("src.build.core")
     local build_tool = require("src.build.tool")
     local prebuild = require("src.prebuild")
+    local lock = require("src.lock")
 
     prefs.init(ctx)
 
@@ -56,6 +57,15 @@ function PLUGIN:BackendInstall(ctx)
     -- Run Builds
     local cores = util.get_parallel_cores()
     build_core.build_if_missing(core_install_path, core_source_dir, cores)
+
+    local build_sequentially = prefs.opts.build_sequentially
+    local lock_path
+    if build_sequentially then
+        lock_path = file.join_path(builds_path, "..", "..", ".lock")
+        lock.acquire(lock_path)
+        logger.debug("Acquired tool build lock: " .. lock_path)
+    end
+
     build_tool.build(
         tool,
         version,
@@ -67,6 +77,11 @@ function PLUGIN:BackendInstall(ctx)
         tool_config,
         cores
     )
+
+    if build_sequentially then
+        lock.release(lock_path)
+        logger.debug("Released build tool lock: " .. lock_path)
+    end
 
     return {}
 end
