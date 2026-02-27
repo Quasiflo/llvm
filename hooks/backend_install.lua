@@ -17,6 +17,7 @@ function PLUGIN:BackendInstall(ctx)
     local version = ctx.version
     local install_path = ctx.install_path
     local download_path = ctx.download_path
+    local builds_path = util.get_builds_path(download_path)
 
     if not tool or tool == "" then
         error("Tool name cannot be empty")
@@ -33,12 +34,14 @@ function PLUGIN:BackendInstall(ctx)
     local core_name = "core"
     local core_install_path = install_path:gsub(util.escape_magic(tool), core_name)
     local core_download_path = download_path:gsub(util.escape_magic(tool), core_name)
+    local core_builds_path = builds_path:gsub(util.escape_magic(tool), core_name)
 
     cmd.exec("mkdir -p " .. core_download_path)
     cmd.exec("mkdir -p " .. core_install_path)
+    cmd.exec("mkdir -p " .. core_builds_path)
 
     local tarball_path = download.download_source_tarball(version, core_download_path)
-    local core_source_dir = download.extract_source(tarball_path, core_download_path, version)
+    local core_source_dir = download.extract_source(tarball_path, core_builds_path, version)
 
     -- Check Tool
     logger.milestone("Verifying Tool: " .. tool .. " " .. version .. " ...")
@@ -50,7 +53,7 @@ function PLUGIN:BackendInstall(ctx)
     -- Run Builds
     local cores = util.get_parallel_cores()
     build_core.build_if_missing(core_install_path, core_source_dir, cores)
-    build_tool.build(tool, version, install_path, download_path, tool_source_dir, core_install_path, tool_config, cores)
+    build_tool.build(tool, version, install_path, builds_path, tool_source_dir, core_install_path, tool_config, cores)
 
     return {}
 end

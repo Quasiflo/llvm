@@ -1,7 +1,7 @@
 --- Tool-specific build logic
 local M = {}
 
-function M.build(tool, version, install_path, download_path, tool_source_dir, core_install_path, tool_config, cores)
+function M.build(tool, version, install_path, builds_path, tool_source_dir, core_install_path, tool_config, cores)
     local cmd = require("cmd")
     local file = require("file")
     local cmake = require("src.cmake")
@@ -18,7 +18,7 @@ function M.build(tool, version, install_path, download_path, tool_source_dir, co
 
     cmd.exec("mkdir -p " .. install_path)
 
-    local build_dir = file.join_path(download_path, "build")
+    local build_dir = file.join_path(builds_path, "build")
     cmd.exec("mkdir -p " .. build_dir)
 
     local cmake_cmd = cmake.build_tool_cmake_command(

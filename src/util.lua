@@ -11,6 +11,10 @@ function M.wait(seconds)
     until os.time() > start + seconds
 end
 
+function M.get_builds_path(download_path)
+    return (download_path:gsub("downloads", "builds"))
+end
+
 function M.get_parallel_cores()
     local cmd = require("cmd")
     local cores_cmd = RUNTIME.osType == "linux" and "nproc" or "sysctl -n hw.ncpu"

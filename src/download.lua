@@ -30,15 +30,15 @@ function M.download_source_tarball(version, download_path)
     return tarball_path
 end
 
-function M.extract_source(tarball_path, download_path, version)
+function M.extract_source(tarball_path, builds_path, version)
     local cmd = require("cmd")
     local file = require("file")
     local logger = require("src.logger")
 
-    local source_dir = file.join_path(download_path, "llvm-project-" .. version .. ".src")
+    local source_dir = file.join_path(builds_path, "llvm-project-" .. version .. ".src")
     if not file.exists(source_dir) then
         logger.step("Extracting source...")
-        cmd.exec("tar -xJf " .. tarball_path .. " -C " .. download_path)
+        cmd.exec("tar -xJf " .. tarball_path .. " -C " .. builds_path)
         logger.success("Extracted source")
     else
         logger.skip("Source already extracted")
