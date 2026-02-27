@@ -19,4 +19,5 @@
         ".vscode/mise-tools": true
     },
     "explorerExclude.backup": {},
+    "python.defaultInterpreterPath": "${workspaceFolder}/.vscode/mise-tools/python",
 }

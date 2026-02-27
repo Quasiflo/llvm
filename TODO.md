@@ -1,14 +1,12 @@
 Bonus tools using variable to disable
+Add option to force series tool builds (adds lock in llvm core shared)
+
+Cache env setup and rebuild if necessary
 
 Make scripts windows compatible ie core count for make, paths etc
 Add mise tool option to download prebuilt binaries (off by default, useful for ci/cd)
 <!-- [tools]
 llvm = { version = '21', prebuilt = true } -->
-
-5. Security Considerations
-- Downloads tarballs over HTTPS (good)
-- No checksum verification after download
-Recommendation: Add SHA256 verification against LLVM's release signatures.
 
 7. Platform Incomplete
 - Windows support is acknowledged as broken (TODO mentions this)
@@ -32,8 +30,11 @@ llvm = { version = "21", build_cores = 4 }
 
 5. Add spdx license detection: For compiler-rt libraries that have different licenses
 
-6. Consider incremental builds: Currently full rebuilds every time; could check if source changed
-
 better docs & settings & complete TODOs
 
 Fix bazel bug where settings get auto added even if local mise isn't using bazel (but global is?)
+
+
+Docs sections
+Variables:
+- BUILD_CORES
