@@ -136,7 +136,8 @@ src/
 ├── config.lua           # Tool definitions (project name, binary, flags)
 ├── versions.lua        # Fetch/sort LLVM versions from GitHub
 ├── download.lua        # Download source tarball with locking
-├── lock.lua            # Atomic lock with process health checking
+├── lock.lua            # Atomic lock with inter-process health checking
+├── logger.lua          # Centralized logging (milestone, step, debug, warn, success)
 ├── cmake.lua           # CMake command builders
 ├── prebuild.lua        # Pre-build requirements validation
 ├── util.lua            # Utilities (escape_magic, get_parallel_cores)
@@ -188,6 +189,7 @@ local result = cmd.exec("git ls-remote --tags https://github.com/llvm/llvm-proje
 ### Core Build Requirements
 - **cmake** - Build system generator
 - **ninja** - Fast parallel build tool
+- **python** - Required for LLVM build system
 - **C++ compiler** - g++, clang++, or MSVC
 
 Install via mise:
@@ -206,7 +208,8 @@ Some tools may require additional tools (documented in `src/config.lua`).
 │   ├── config.lua              # Tool configuration definitions
 │   ├── versions.lua            # Version fetching/parsing from GitHub
 │   ├── download.lua            # Source tarball download with locking
-│   ├── lock.lua                # Atomic lock with process health checking
+│   ├── lock.lua                # Atomic lock with inter-process health checking
+│   ├── logger.lua              # Centralized logging
 │   ├── cmake.lua               # CMake command builders
 │   ├── prebuild.lua            # Pre-build requirements validation
 │   ├── util.lua                # Common utilities
@@ -224,7 +227,8 @@ Some tools may require additional tools (documented in `src/config.lua`).
 ├── metadata.lua                # Plugin metadata
 ├── mise.toml                   # Dev tools and tasks config
 ├── stylua.toml                 # Formatting rules
-└── .github/workflows/ci.yml    # CI pipeline
+├── hk.pkl                      # Linting and pre-commit hook config
+└── .github/workflows/ci.yml   # CI pipeline
 ```
 
 ## Resources
