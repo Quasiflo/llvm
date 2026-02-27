@@ -1,11 +1,9 @@
+Bonus tools using variable to disable
+
 Make scripts windows compatible ie core count for make, paths etc
 Add mise tool option to download prebuilt binaries (off by default, useful for ci/cd)
 <!-- [tools]
 llvm = { version = '21', prebuilt = true } -->
-Fix bazel bug where settings get auto added even if local mise isn't using bazel (but global is?)
-Standardise formatter
-Bonus tools for clangd, also do using variable to disable
-Locking needs revision and edge cases checked
 
 5. Security Considerations
 - Downloads tarballs over HTTPS (good)
@@ -37,3 +35,5 @@ llvm = { version = "21", build_cores = 4 }
 6. Consider incremental builds: Currently full rebuilds every time; could check if source changed
 
 better docs & settings & complete TODOs
+
+Fix bazel bug where settings get auto added even if local mise isn't using bazel (but global is?)

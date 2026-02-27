@@ -77,10 +77,4 @@ function M.check_tool_requirements(tool_name, tool_config)
     return true
 end
 
-function M.check_all_requirements(tool_name, tool_config)
-    M.check_core_requirements()
-    M.check_tool_requirements(tool_name, tool_config)
-    return true
-end
-
 return M

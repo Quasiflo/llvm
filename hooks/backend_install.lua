@@ -25,11 +25,10 @@ function PLUGIN:BackendInstall(ctx)
         error("Version cannot be empty")
     end
 
-    logger.milestone("Installing " .. tool .. " " .. version .. " ...")
+    logger.milestone("Downloading Core")
 
-    local tool_config = config.validate_tool(tool)
-
-    prebuild.check_all_requirements(tool, tool_config)
+    -- Download Core
+    prebuild.check_core_requirements()
 
     local core_name = "core"
     local core_install_path = install_path:gsub(util.escape_magic(tool), core_name)
@@ -40,12 +39,17 @@ function PLUGIN:BackendInstall(ctx)
 
     local tarball_path = download.download_source_tarball(version, core_download_path)
     local core_source_dir = download.extract_source(tarball_path, core_download_path, version)
+
+    -- Check Tool
+    logger.milestone("Verifying Tool: " .. tool .. " " .. version .. " ...")
+
     local tool_source_dir = file.join_path(core_source_dir, tool)
+    local tool_config = config.validate_tool(tool, core_source_dir)
+    prebuild.check_tool_requirements(tool, tool_config)
 
+    -- Run Builds
     local cores = util.get_parallel_cores()
-
     build_core.build_if_missing(core_install_path, core_source_dir, cores)
-
     build_tool.build(tool, version, install_path, download_path, tool_source_dir, core_install_path, tool_config, cores)
 
     return {}
