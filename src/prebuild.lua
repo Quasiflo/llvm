@@ -39,20 +39,26 @@ function M.check_core_requirements()
 
     local missing_cmake = not find_executable("cmake")
     local missing_ninja = not find_executable("ninja")
+    local missing_python = not find_executable("python")
     local missing_compiler = not find_executable("c++", CORE_REQUIRED_TOOLS[3].aliases)
 
     if missing_cmake then
-        error("Missing required build tool: cmake\nInstall via: mise install cmake@latest")
+        error("Missing required build tool: cmake\nInstall via: mise install -g cmake@latest")
     end
     logger.step("cmake: found")
 
     if missing_ninja then
-        error("Missing required build tool: ninja\nInstall via: mise install ninja@latest")
+        error("Missing required build tool: ninja\nInstall via: mise install -g ninja@latest")
+    end
+    logger.step("ninja: found")
+
+    if missing_python then
+        error("Missing required build tool: python\nInstall via: mise install -g python@latest")
     end
     logger.step("ninja: found")
 
     if missing_compiler then
-        error("Missing required build tool: c++ compiler\nInstall via: brew install gcc / apt install g++")
+        error("Missing required build tool: c++ compiler\n(Yes, you need a compiler to compile your compiler)")
     end
     logger.step("c++ compiler: found")
 
