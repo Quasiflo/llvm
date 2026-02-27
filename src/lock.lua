@@ -14,10 +14,6 @@ local function sleep(seconds)
     end
 end
 
-local function escape_path(path)
-    return path:gsub("'", "'\\''")
-end
-
 local function read_lock_info(lock_dir)
     local cmd = require("cmd")
     local file = require("file")
@@ -58,12 +54,12 @@ local function is_process_alive(pid)
         return false
     end
     local success, result = pcall(cmd.exec, "kill -0 " .. pid .. " 2>/dev/null")
-    return success and result and not result.exit_code
+    return success and result and not result.exit_code or false
 end
 
 local function cleanup_stale_lock(lock_dir)
     local cmd = require("cmd")
-    pcall(cmd.exec, "rm -rf '" .. escape_path(lock_dir) .. "'")
+    pcall(cmd.exec, "rm -rf '" .. lock_dir .. "'")
 end
 
 function M.acquire(lock_path, opts)
@@ -79,7 +75,7 @@ function M.acquire(lock_path, opts)
     local logged_wait = false
 
     while os.time() - start_time < timeout do
-        local success_mkdir, mkdir_result = pcall(cmd.exec, "mkdir '" .. escape_path(lock_dir) .. "' 2>/dev/null")
+        local success_mkdir, mkdir_result = pcall(cmd.exec, "mkdir '" .. lock_dir .. "' 2>/dev/null")
         if success_mkdir and mkdir_result and not mkdir_result.exit_code then
             if logged_wait then
                 logger.success("Lock acquired")
@@ -95,7 +91,7 @@ function M.acquire(lock_path, opts)
             if write_lock_info(lock_dir, info) then
                 return true
             else
-                pcall(cmd.exec, "rmdir '" .. escape_path(lock_dir) .. "'")
+                pcall(cmd.exec, "rmdir '" .. lock_dir .. "'")
             end
         end
 
@@ -105,31 +101,49 @@ function M.acquire(lock_path, opts)
         end
 
         local info = read_lock_info(lock_dir)
-        -- TODO if can't read info, assume stale
-        if info then
-            local owner_alive = is_process_alive(info.pid)
-            logger.debug("Lock owner is still alive")
+        local is_stale = false
 
-            if not owner_alive then
-                cleanup_stale_lock(lock_dir)
-                local success_mkdir2, mkdir_result2 =
-                    pcall(cmd.exec, "mkdir '" .. escape_path(lock_dir) .. "' 2>/dev/null")
-                if success_mkdir2 and mkdir_result2 and mkdir_result2.exit_code == 0 then
-                    logger.success("Stale lock cleaned up, acquired new lock")
-                    has_logged_wait = false
-                    local success_pid2, pid_result2 = pcall(cmd.exec, "echo $PPID")
-                    local success_host2, host_result2 = pcall(cmd.exec, "hostname")
-                    local new_info = {
-                        pid = success_pid2 and pid_result2 and tonumber(pid_result2:match("%d+")) or 0,
-                        timestamp = os.time(),
-                        hostname = success_host2 and host_result2 and host_result2:gsub("%s+", "") or "",
-                    }
-                    if write_lock_info(lock_dir, new_info) then
-                        return true
-                    else
-                        pcall(cmd.exec, "rmdir '" .. escape_path(lock_dir) .. "'")
-                    end
+        if not info then
+            -- If we can't get info, wait a bit and try again
+            logger.debug("Couldn't get lock info, retrying...")
+            sleep(DEFAULT_CHECK_INTERVAL)
+            info = read_lock_info(lock_dir)
+            if not info then
+                logger.debug("Still couldn't get lock info, assuming stale")
+                is_stale = true
+            end
+        end
+
+        if not is_stale then
+            is_stale = (is_process_alive((info and info.pid)) == false)
+            if is_stale then
+                logger.debug("Lock owner is dead, PID: " .. (info and info.pid))
+            else
+                logger.debug("Lock owner is still alive, PID: " .. (info and info.pid))
+            end
+        end
+
+        if is_stale then
+            logger.debug("Cleaning stale lock: " .. lock_dir)
+            cleanup_stale_lock(lock_dir)
+            local success_mkdir2, mkdir_result2 = pcall(cmd.exec, "mkdir '" .. lock_dir .. "' 2>/dev/null")
+            if success_mkdir2 and mkdir_result2 and not mkdir_result2.exit_code then
+                logger.success("Stale lock cleaned up, acquired new lock")
+                has_logged_wait = false
+                local success_pid2, pid_result2 = pcall(cmd.exec, "echo $PPID")
+                local success_host2, host_result2 = pcall(cmd.exec, "hostname")
+                local new_info = {
+                    pid = success_pid2 and pid_result2 and tonumber(pid_result2:match("%d+")) or 0,
+                    timestamp = os.time(),
+                    hostname = success_host2 and host_result2 and host_result2:gsub("%s+", "") or "",
+                }
+                if write_lock_info(lock_dir, new_info) then
+                    return true
+                else
+                    pcall(cmd.exec, "rmdir '" .. lock_dir .. "'")
                 end
+            else
+                logger.warn("Failed to acquire new lock, retrying")
             end
         end
 
@@ -156,7 +170,7 @@ function M.release(lock_path)
         return false
     end
 
-    pcall(cmd.exec, "rm -rf '" .. escape_path(lock_dir) .. "'")
+    pcall(cmd.exec, "rm -rf '" .. lock_dir .. "'")
     return true
 end
 

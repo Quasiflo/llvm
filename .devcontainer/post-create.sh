@@ -8,6 +8,12 @@ eval "$(mise activate zsh)" # Enables Mise in shells
 export EDITOR=nano # Preference for Yazi to use nano
 EOF
 
+echo "Enabling global mise tools ..."
+mise trust /workspaces/llvm/.config
+mise use -g cmake@latest
+mise use -g ninja@latest
+mise use -g python@latest
+
 echo "Enabling mise experimental features ..."
 mise settings experimental=true
 
