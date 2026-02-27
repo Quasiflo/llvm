@@ -3,15 +3,21 @@
 local M = {}
 
 M.opts = nil
-M.initialized = false
 
 function M.init(ctx)
-    if M.initialized then
+    local logger = require("src.logger")
+
+    if not M.opts == nil then
         return
     end
 
-    M.opts = ctx.options
-    M.initialized = true
+    if ctx.options == nil then
+        logger.warn("Mise version too old - Config options aren't supported!")
+        M.opts = {}
+    else
+        logger.info("Config options loaded successfully")
+        M.opts = ctx.options
+    end
 end
 
 return M

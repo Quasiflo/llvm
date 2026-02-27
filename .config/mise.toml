@@ -12,7 +12,7 @@ stylua = "latest"
 cmake = "latest"
 ninja = "latest"
 python = "latest"
-"llvm:clang" = { version = "latest", build_cores = 22 }
+"llvm:clang" = { version = "latest", build_cores = 22, clang_extras = false }
 
 [tasks.format]
 description = "Format Lua scripts"

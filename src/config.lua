@@ -2,6 +2,15 @@
 local M = {}
 
 local file = require("file")
+local prefs = require("src.prefs")
+
+local function get_clang_extra_flags(core_source_dir)
+    local clang_extras = prefs.opts.clang_extras
+    if clang_extras == false then
+        return ""
+    end
+    return "-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR=" .. file.join_path(core_source_dir, "clang-tools-extra")
+end
 
 -- TODO update bin to toolcheck system
 local function tool_configs(core_source_dir)
@@ -15,8 +24,7 @@ local function tool_configs(core_source_dir)
         ["clang"] = {
             project = "clang",
             bin = "clang",
-            extra_flags = "-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR="
-                .. file.join_path(core_source_dir, "clang-tools-extra"), -- TODO make variable to ignore clang extra tools
+            extra_flags = get_clang_extra_flags(core_source_dir),
             required_tools = {
                 --! EXAMPLE { name = "clang", aliases = {"clang-18", "clang-17"}, help = "Clang >= 15 recommended" },
             },
