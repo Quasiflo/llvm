@@ -125,9 +125,9 @@ The plugin currently supports building these LLVM tools from source:
 
 | Hook | Available Variables |
 |------|---------------------|
-| BackendListVersions | `ctx.tool` |
-| BackendInstall | `ctx.tool`, `ctx.version`, `ctx.install_path`, `ctx.download_path` |
-| BackendExecEnv | `ctx.install_path`, `ctx.tool`, `ctx.version` |
+| BackendListVersions | `ctx.tool`, `ctx.options` |
+| BackendInstall | `ctx.tool`, `ctx.version`, `ctx.install_path`, `ctx.download_path`, `ctx.options` |
+| BackendExecEnv | `ctx.install_path`, `ctx.tool`, `ctx.version`, `ctx.options` |
 
 ### Core Modules
 
@@ -140,6 +140,7 @@ src/
 ├── logger.lua          # Centralized logging (milestone, step, debug, warn, success)
 ├── cmake.lua           # CMake command builders
 ├── prebuild.lua        # Pre-build requirements validation
+├── prefs.lua           # User configuration from mise.toml
 ├── util.lua            # Utilities (escape_magic, get_parallel_cores)
 └── build/
     ├── core.lua        # Core LLVM build logic
@@ -156,6 +157,23 @@ elseif RUNTIME.osType == "darwin" then
 elseif RUNTIME.osType == "windows" then
     -- Windows-specific
 end
+```
+
+### Reading User Configuration from mise.toml
+Use the `prefs` module to read options passed in from the user's mise.toml config:
+
+```lua
+local prefs = require("src.prefs")
+
+-- Access options: prefs.opts.<option_name>
+-- Example: prefs.opts.build_cores
+```
+
+Example usage in `mise.toml`:
+```toml
+[tools.llvm:clang]
+version = "latest"
+build_cores = 8  # Custom option passed to plugin
 ```
 
 ### Imports & Module Usage
