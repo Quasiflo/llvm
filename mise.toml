@@ -5,6 +5,7 @@ MISE_DEBUG=1
 [tools]
 actionlint = "latest"
 cmake = "latest"
+yazi = "latest"
 hk = "latest"
 lua = "5.4"
 lua-language-server = "latest"
