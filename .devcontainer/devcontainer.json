@@ -36,7 +36,8 @@
     }
   ],
   "containerEnv": {
-    "MISE_DATA_DIR": "/mnt/mise-data"
+    "MISE_DATA_DIR": "/mnt/mise-data",
+    "MISE_ENV": "devcontainer"
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/mnt/mise-data/shims"
