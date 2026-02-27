@@ -61,7 +61,7 @@ function PLUGIN:BackendInstall(ctx)
     local build_sequentially = prefs.opts.build_sequentially
     local lock_path
     if build_sequentially then
-        lock_path = file.join_path(builds_path, "..", "..", ".lock")
+        lock_path = file.join_path(builds_path, "..", "..", ".llvm-lock")
         lock.acquire(lock_path)
         logger.debug("Acquired tool build lock: " .. lock_path)
     end
