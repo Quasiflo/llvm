@@ -53,7 +53,17 @@ function PLUGIN:BackendInstall(ctx)
     -- Run Builds
     local cores = util.get_parallel_cores()
     build_core.build_if_missing(core_install_path, core_source_dir, cores)
-    build_tool.build(tool, version, install_path, builds_path, tool_source_dir, core_install_path, tool_config, cores)
+    build_tool.build(
+        tool,
+        version,
+        install_path,
+        builds_path,
+        tool_source_dir,
+        core_source_dir,
+        core_install_path,
+        tool_config,
+        cores
+    )
 
     return {}
 end

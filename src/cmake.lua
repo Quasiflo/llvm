@@ -21,8 +21,16 @@ function M.build_core_cmake_command(source_dir, install_path)
         .. DISABLE_TESTS_FLAGS
 end
 
-function M.build_tool_cmake_command(source_dir, install_path, core_install_path, extra_flags, is_runtime)
-    local project_dir = is_runtime and "runtimes" or source_dir
+function M.build_tool_cmake_command(
+    source_dir,
+    install_path,
+    core_source_path,
+    core_install_path,
+    extra_flags,
+    is_runtime
+)
+    local file = require("file")
+    local project_dir = is_runtime and file.join_path(core_source_path, "runtimes") or source_dir
     return "cmake -S "
         .. project_dir
         .. " -B . "

@@ -8,23 +8,18 @@ function M.build_if_missing(core_install_path, core_source_dir, cores)
     local lock = require("src.lock")
     local logger = require("src.logger")
 
+    local lockfile = file.join_path(core_install_path, ".lock")
+    lock.acquire(lockfile, { timeout = 300000 })
+
     if file.exists(file.join_path(core_install_path, "bin")) then
-        logger.skip("Core LLVM already built (using cached installation)")
+        lock.release(lockfile)
+        logger.skip("Core LLVM already built, skipping...")
         return
     end
 
     logger.section("Building Core LLVM")
     logger.step("Building core LLVM libraries (shared across all tools)...")
     logger.debug("This may take a while on first build...")
-
-    local lockfile = file.join_path(core_install_path, ".lock")
-    lock.acquire(lockfile, { timeout = 6000 })
-
-    if file.exists(file.join_path(core_install_path, "bin")) then
-        lock.release(lockfile)
-        logger.skip("Core LLVM already built (acquired lock from another process)")
-        return
-    end
 
     local build_dir = file.join_path(core_source_dir, "build")
     cmd.exec("mkdir -p " .. build_dir)
