@@ -19,7 +19,7 @@
         "streetsidesoftware.code-spell-checker-australian-english",
         "tamasfe.even-better-toml",
         "sst-dev.opencode",
-        "yinfei.luahelper"
+        "sumneko.lua"
       ]
     }
   },
