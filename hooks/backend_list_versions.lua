@@ -3,6 +3,10 @@
 --- @param ctx {tool: string} Context (tool = the tool name requested)
 --- @return {versions: string[]} Table containing list of available versions
 function PLUGIN:BackendListVersions(ctx)
+    local prefs = require("src.prefs")
+
+    prefs.init(ctx)
+
     local tool = ctx.tool
 
     if not tool or tool == "" then

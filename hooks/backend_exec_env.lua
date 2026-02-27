@@ -3,6 +3,10 @@
 --- @param ctx {install_path: string, tool: string, version: string} Context
 --- @return {env_vars: table[]} Table containing list of environment variable definitions
 function PLUGIN:BackendExecEnv(ctx)
+    local prefs = require("src.prefs")
+
+    prefs.init(ctx)
+
     local install_path = ctx.install_path
 
     local file = require("file")

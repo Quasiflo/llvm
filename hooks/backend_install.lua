@@ -8,10 +8,13 @@ function PLUGIN:BackendInstall(ctx)
     local logger = require("src.logger")
     local util = require("src.util")
     local config = require("src.config")
+    local prefs = require("src.prefs")
     local download = require("src.download")
     local build_core = require("src.build.core")
     local build_tool = require("src.build.tool")
     local prebuild = require("src.prebuild")
+
+    prefs.init(ctx)
 
     local tool = ctx.tool
     local version = ctx.version

@@ -16,6 +16,11 @@ function M.get_builds_path(download_path)
 end
 
 function M.get_parallel_cores()
+    local prefs = require("src.prefs")
+    if prefs.opts.build_cores then
+        return tostring(prefs.opts.build_cores)
+    end
+
     local cmd = require("cmd")
     local cores_cmd = RUNTIME.osType == "linux" and "nproc" or "sysctl -n hw.ncpu"
     local cores_output = cmd.exec(cores_cmd)
