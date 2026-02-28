@@ -52,7 +52,7 @@ These tools need to be available on path for the LLVM build to succeed. You can 
 
 #### Install via mise:
 ```bash
-mise install -g cmake@latest ninja@latest python@latest
+mise use -g cmake@latest ninja@latest python@latest
 ```
 
 ## Available Tools

@@ -12,7 +12,7 @@ This plugin is built in Lua 5.4 following the mise backend plugin architecture.
 
 #### Install via mise:
 ```bash
-mise install -g cmake@latest ninja@latest python@latest
+mise use -g cmake@latest ninja@latest python@latest
 ```
 
 ### Link Plugin for Development
