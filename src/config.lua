@@ -12,7 +12,6 @@ local function get_clang_extra_flags(core_source_dir)
     return "-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR=" .. file.join_path(core_source_dir, "clang-tools-extra")
 end
 
--- TODO update bin to toolcheck system
 local function tool_configs(core_source_dir)
     local CONFIGS = {
         ["bolt"] = {

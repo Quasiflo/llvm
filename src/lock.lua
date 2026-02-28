@@ -3,7 +3,6 @@ local M = {}
 
 local DEFAULT_TIMEOUT = 300
 local DEFAULT_CHECK_INTERVAL = 2
-local has_logged_wait = false
 
 local function sleep(seconds)
     local cmd = require("cmd")
@@ -67,7 +66,6 @@ function M.acquire(lock_path, opts)
     local timeout = opts.timeout or DEFAULT_TIMEOUT
     local check_interval = opts.check_interval or DEFAULT_CHECK_INTERVAL
 
-    local file = require("file")
     local cmd = require("cmd")
     local logger = require("src.logger")
     local lock_dir = lock_path
@@ -80,7 +78,6 @@ function M.acquire(lock_path, opts)
             if logged_wait then
                 logger.success("Lock acquired")
             end
-            has_logged_wait = false
             local success_pid, pid_result = pcall(cmd.exec, "echo $PPID")
             local success_host, host_result = pcall(cmd.exec, "hostname")
             local info = {
@@ -129,7 +126,6 @@ function M.acquire(lock_path, opts)
             local success_mkdir2, mkdir_result2 = pcall(cmd.exec, "mkdir '" .. lock_dir .. "' 2>/dev/null")
             if success_mkdir2 and mkdir_result2 and not mkdir_result2.exit_code then
                 logger.success("Stale lock cleaned up, acquired new lock")
-                has_logged_wait = false
                 local success_pid2, pid_result2 = pcall(cmd.exec, "echo $PPID")
                 local success_host2, host_result2 = pcall(cmd.exec, "hostname")
                 local new_info = {
