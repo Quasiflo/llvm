@@ -15,7 +15,7 @@ function M.init(ctx)
         logger.warn("Mise version too old - Config options aren't supported!")
         M.opts = {}
     else
-        logger.info("Config options loaded successfully")
+        logger.debug("Config options loaded successfully")
         M.opts = ctx.options
     end
 end
